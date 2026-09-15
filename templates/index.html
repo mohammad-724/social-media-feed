@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Social Feed{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <p class="eyebrow">COMMUNITY FEED</p>
+        <h1>Share what's on your mind.</h1>
+        <p class="hero-text">
+            A simple social feed built with Flask. Publish a thought,
+            react to posts, and keep the conversation moving.
+        </p>
+    </div>
+    <div class="hero-stat">
+        <span class="stat-number">{{ posts|length }}</span>
+        <span class="stat-label">Post{{ '' if posts|length == 1 else 's' }}</span>
+    </div>
+</section>
+
+<section class="composer card">
+    <div class="section-heading">
+        <div>
+            <h2>Create a post</h2>
+            <p>Keep it concise and respectful.</p>
+        </div>
+        <span class="limit">500 characters</span>
+    </div>
+
+    <form action="{{ url_for('create_post') }}" method="POST" class="composer-form">
+        <label for="username">Your name</label>
+        <input
+            id="username"
+            name="username"
+            type="text"
+            maxlength="50"
+            placeholder="e.g. Mohammad"
+            required
+        >
+
+        <label for="content">What's happening?</label>
+        <textarea
+            id="content"
+            name="content"
+            maxlength="500"
+            placeholder="Write your post here..."
+            required
+        ></textarea>
+
+        <div class="composer-actions">
+            <span class="helper">Your post will appear at the top of the feed.</span>
+            <button type="submit" class="primary-btn">Publish Post</button>
+        </div>
+    </form>
+</section>
+
+<section class="feed-section">
+    <div class="feed-heading">
+        <div>
+            <h2>Latest posts</h2>
+            <p>Newest conversations appear first.</p>
+        </div>
+    </div>
+
+    {% if posts %}
+        <div class="feed-list">
+            {% for post in posts %}
+                <article class="post card">
+                    <div class="post-top">
+                        <div class="avatar">{{ post.username[0]|upper }}</div>
+                        <div class="post-author">
+                            <strong>{{ post.username }}</strong>
+                            <span>{{ post.created_at.strftime("%d %b %Y, %I:%M %p") }}</span>
+                        </div>
+                    </div>
+
+                    <p class="post-content">{{ post.content }}</p>
+
+                    <div class="post-actions">
+                        <form action="{{ url_for('like_post', post_id=post.id) }}" method="POST">
+                            <button type="submit" class="action-btn like-btn">
+                                <span>♥</span> {{ post.likes }} Like{{ '' if post.likes == 1 else 's' }}
+                            </button>
+                        </form>
+
+                        <form
+                            action="{{ url_for('delete_post', post_id=post.id) }}"
+                            method="POST"
+                            onsubmit="return confirm('Delete this post?');"
+                        >
+                            <button type="submit" class="action-btn delete-btn">Delete</button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state card">
+            <div class="empty-icon">+</div>
+            <h3>No posts yet</h3>
+            <p>Be the first person to publish something.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

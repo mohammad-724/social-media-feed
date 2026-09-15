@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="empty-state card error-state">
+    <div class="empty-icon">!</div>
+    <h1>{{ title }}</h1>
+    <p>{{ message }}</p>
+    <a class="primary-btn link-btn" href="{{ url_for('index') }}">Back to feed</a>
+</section>
+{% endblock %}
